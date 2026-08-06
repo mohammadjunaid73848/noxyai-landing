@@ -261,7 +261,7 @@ export default function XoxoAdminPage() {
     }
   };
 
-  // SCREEN 1: ADMIN LOGIN (EMAIL + PASSWORD ONLY, NO SIGNUP)
+  // SCREEN 1: ADMIN LOGIN (EMAIL + PASSWORD ONLY, NO EXPOSED EMAIL)
   if (!authenticated) {
     return (
       <main className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-4">
@@ -271,7 +271,7 @@ export default function XoxoAdminPage() {
               <Lock size={28} />
             </div>
             <h1 className="text-2xl font-bold tracking-tight">Secret Gateway</h1>
-            <p className="text-sm text-slate-400">Enter your admin credentials to continue</p>
+            <p className="text-sm text-slate-400">Enter your credentials to continue</p>
           </div>
 
           {authError && (
@@ -291,7 +291,7 @@ export default function XoxoAdminPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="mohammadjunaidrather03@gmail.com"
+                placeholder="Enter email address..."
                 className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white text-sm focus:outline-none focus:border-white transition"
               />
             </div>
@@ -315,7 +315,7 @@ export default function XoxoAdminPage() {
               disabled={loading}
               className="w-full py-3.5 rounded-xl bg-white text-slate-950 font-bold text-sm hover:bg-slate-200 transition shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
-              {loading ? 'Validating...' : 'Log in as Admin'} <ArrowRight size={16} />
+              {loading ? 'Validating...' : 'Log in'} <ArrowRight size={16} />
             </button>
           </form>
         </div>
@@ -363,7 +363,7 @@ export default function XoxoAdminPage() {
               disabled={loading}
               className="w-full py-3.5 rounded-xl bg-amber-400 text-slate-950 font-bold text-sm hover:bg-amber-300 transition shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
-              {loading ? 'Verifying Key...' : 'Unlock Secret Studio'} <CheckCircle size={16} />
+              {loading ? 'Verifying Key...' : 'Unlock Studio'} <CheckCircle size={16} />
             </button>
           </form>
         </div>
@@ -379,9 +379,9 @@ export default function XoxoAdminPage() {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img src="/favicon.png" alt="NoxyAI" className="h-8 w-8 rounded-full border border-slate-700 p-0.5" />
-            <span className="font-bold text-lg tracking-tight">Secret Admin Studio (/xoxo)</span>
+            <span className="font-bold text-lg tracking-tight">Studio (/xoxo)</span>
             <span className="bg-emerald-500/20 text-emerald-400 text-xs px-2.5 py-0.5 rounded-full font-mono border border-emerald-500/30">
-              OPEN_KEY VERIFIED
+              UNLOCKED
             </span>
           </div>
 
