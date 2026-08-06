@@ -23,7 +23,7 @@ interface BlankImageMatch {
   alt: string;
 }
 
-export default function AdminPage() {
+export default function XoxoAdminPage() {
   // Authentication & Security States
   const [authenticated, setAuthenticated] = useState(false);
   const [keyVerified, setKeyVerified] = useState(false);
@@ -270,8 +270,8 @@ export default function AdminPage() {
             <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center mx-auto text-white">
               <Lock size={28} />
             </div>
-            <h1 className="text-2xl font-bold tracking-tight">Admin Gateway</h1>
-            <p className="text-sm text-slate-400">Enter your credentials to continue</p>
+            <h1 className="text-2xl font-bold tracking-tight">Secret Gateway</h1>
+            <p className="text-sm text-slate-400">Enter your admin credentials to continue</p>
           </div>
 
           {authError && (
@@ -291,7 +291,7 @@ export default function AdminPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@noxyai.com"
+                placeholder="mohammadjunaidrather03@gmail.com"
                 className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white text-sm focus:outline-none focus:border-white transition"
               />
             </div>
@@ -318,10 +318,6 @@ export default function AdminPage() {
               {loading ? 'Validating...' : 'Log in as Admin'} <ArrowRight size={16} />
             </button>
           </form>
-
-          <p className="text-center text-xs text-slate-500">
-            Protected area. Email restricted by <code className="text-slate-400">ADMIN_EMAIL</code> env.
-          </p>
         </div>
       </main>
     );
@@ -367,7 +363,7 @@ export default function AdminPage() {
               disabled={loading}
               className="w-full py-3.5 rounded-xl bg-amber-400 text-slate-950 font-bold text-sm hover:bg-amber-300 transition shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
-              {loading ? 'Verifying Key...' : 'Unlock Admin Editor'} <CheckCircle size={16} />
+              {loading ? 'Verifying Key...' : 'Unlock Secret Studio'} <CheckCircle size={16} />
             </button>
           </form>
         </div>
@@ -378,12 +374,12 @@ export default function AdminPage() {
   // SCREEN 3: BLOG EDITOR & CONTENT MANAGER
   return (
     <main className="min-h-screen bg-[#f8fafc] text-slate-900">
-      {/* Top Admin Header */}
+      {/* Top Secret Header */}
       <header className="sticky top-0 z-30 bg-slate-950 text-white px-6 py-4 border-b border-slate-800">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img src="/favicon.png" alt="NoxyAI" className="h-8 w-8 rounded-full border border-slate-700 p-0.5" />
-            <span className="font-bold text-lg tracking-tight">NoxyAI Admin Studio</span>
+            <span className="font-bold text-lg tracking-tight">Secret Admin Studio (/xoxo)</span>
             <span className="bg-emerald-500/20 text-emerald-400 text-xs px-2.5 py-0.5 rounded-full font-mono border border-emerald-500/30">
               OPEN_KEY VERIFIED
             </span>
