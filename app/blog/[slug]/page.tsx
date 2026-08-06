@@ -35,16 +35,24 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         />
       </article>
 
-      {/* FULL NOXYAI FOOTER AT THE BOTTOM */}
+      {/* FULL NOXYAI FOOTER WITH NURATIX BRANDING */}
       <footer className="py-12 md:py-16 px-4 bg-[#000000] text-slate-400 border-t border-zinc-800 relative z-20">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
             <div className="col-span-2 space-y-4">
-              <img
-                src="/logo-noxyai-white-custom.png"
-                alt="NoxyAI Logo"
-                className="h-8 md:h-10 w-auto bg-transparent p-0 object-contain"
-              />
+              <div className="flex items-center gap-3">
+                <img
+                  src="/logo-noxyai-white-custom.png"
+                  alt="NoxyAI Logo"
+                  className="h-8 md:h-10 w-auto bg-transparent p-0 object-contain"
+                />
+                <span className="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
+                  by
+                  <a href="https://www.nuratix.com/" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition inline-block">
+                    <img src="https://www.nuratix.com/white-logo.png" alt="Nuratix" className="h-4 w-auto object-contain" />
+                  </a>
+                </span>
+              </div>
               <p className="text-sm text-slate-400 max-w-sm leading-relaxed">
                 NoxyAI is a collaborative agent platform for work and life.
               </p>
