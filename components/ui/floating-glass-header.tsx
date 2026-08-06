@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { ChevronRight, Menu, X, MoreVertical } from 'lucide-react'
+import { X, MoreVertical } from 'lucide-react'
 
 export function FloatingGlassHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -17,50 +17,35 @@ export function FloatingGlassHeader() {
           </Link>
 
           {/* Nav Links */}
-          <nav className="flex items-center gap-2">
-            <Link
-              href="/#products"
-              className="px-4 py-2 text-sm font-semibold text-slate-800 hover:text-slate-950 hover:bg-slate-100/70 rounded-full transition flex items-center gap-1"
+          <nav className="flex items-center gap-3">
+            <a
+              href="https://chat.noxyai.com"
+              className="px-4 py-2 text-sm font-semibold text-slate-800 hover:text-slate-950 hover:bg-slate-100/70 rounded-full transition"
             >
-              Products
-              <svg className="w-2.5 h-2.5 opacity-60" viewBox="0 0 12 12" fill="currentColor">
-                <path d="M2 4l4 4 4-4" />
-              </svg>
-            </Link>
+              Product Chat
+            </a>
             <Link
-              href="/#community"
-              className="px-4 py-2 text-sm font-semibold text-slate-800 hover:text-slate-950 hover:bg-slate-100/70 rounded-full transition flex items-center gap-1"
+              href="/blog"
+              className="px-4 py-2 text-sm font-semibold text-slate-800 hover:text-slate-950 hover:bg-slate-100/70 rounded-full transition"
             >
-              Community
-              <svg className="w-2.5 h-2.5 opacity-60" viewBox="0 0 12 12" fill="currentColor">
-                <path d="M2 4l4 4 4-4" />
-              </svg>
+              Blog
             </Link>
-            <Link
-              href="/#resources"
-              className="px-4 py-2 text-sm font-semibold text-slate-800 hover:text-slate-950 hover:bg-slate-100/70 rounded-full transition flex items-center gap-1"
-            >
-              Resources
-              <svg className="w-2.5 h-2.5 opacity-60" viewBox="0 0 12 12" fill="currentColor">
-                <path d="M2 4l4 4 4-4" />
-              </svg>
-            </Link>
-            <Link
-              href="/#pricing"
+            <a
+              href="https://chat.noxyai.com/pricing"
               className="px-4 py-2 text-sm font-semibold text-slate-800 hover:text-slate-950 hover:bg-slate-100/70 rounded-full transition"
             >
               Pricing
-            </Link>
+            </a>
           </nav>
 
           {/* Header Right CTA */}
           <div className="flex items-center gap-3 pr-1">
-            <Link
-              href="/#pricing"
+            <a
+              href="https://chat.noxyai.com"
               className="bg-neutral-900 text-white px-5 py-2.5 rounded-full font-bold text-sm hover:bg-black transition shadow-md hover:shadow-lg cursor-pointer"
             >
               Get started
-            </Link>
+            </a>
           </div>
         </header>
       </div>
@@ -85,12 +70,12 @@ export function FloatingGlassHeader() {
 
         {/* Mobile Right Piece */}
         <div className="pointer-events-auto p-1.5 rounded-full bg-white/90 backdrop-blur-2xl border border-white/80 shadow-xl">
-          <Link
-            href="/#pricing"
+          <a
+            href="https://chat.noxyai.com"
             className="bg-neutral-900 text-white px-4 py-2 rounded-full font-bold text-xs hover:bg-black transition shadow-md cursor-pointer block"
           >
             Get started
-          </Link>
+          </a>
         </div>
       </div>
 
@@ -104,45 +89,38 @@ export function FloatingGlassHeader() {
             </div>
 
             <nav className="space-y-4 text-lg font-bold">
-              <Link
-                href="/#products"
+              <a
+                href="https://chat.noxyai.com"
                 onClick={() => setMobileMenuOpen(false)}
                 className="block p-3 rounded-xl hover:bg-slate-100 text-slate-800"
               >
-                Products
-              </Link>
+                Product Chat
+              </a>
               <Link
-                href="/#community"
+                href="/blog"
                 onClick={() => setMobileMenuOpen(false)}
                 className="block p-3 rounded-xl hover:bg-slate-100 text-slate-800"
               >
-                Community
+                Blog
               </Link>
-              <Link
-                href="/#resources"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block p-3 rounded-xl hover:bg-slate-100 text-slate-800"
-              >
-                Resources
-              </Link>
-              <Link
-                href="/#pricing"
+              <a
+                href="https://chat.noxyai.com/pricing"
                 onClick={() => setMobileMenuOpen(false)}
                 className="block p-3 rounded-xl hover:bg-slate-100 text-slate-800"
               >
                 Pricing
-              </Link>
+              </a>
             </nav>
           </div>
 
           <div className="space-y-4 pb-8 border-t border-slate-200 pt-6">
-            <Link
-              href="/#pricing"
+            <a
+              href="https://chat.noxyai.com"
               onClick={() => setMobileMenuOpen(false)}
               className="w-full bg-neutral-900 text-white py-4 rounded-xl font-bold text-base shadow-lg text-center block"
             >
               Get started for free
-            </Link>
+            </a>
           </div>
         </div>
       )}

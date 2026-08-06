@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { BlogPost } from '@/lib/supabase';
+import { BlogPost, PostStatus } from '@/lib/supabase';
 import {
   Lock,
   Key,
@@ -14,7 +14,11 @@ import {
   AlertCircle,
   ArrowRight,
   LogOut,
-  Eye
+  Eye,
+  Edit,
+  Globe,
+  FileText,
+  EyeOff
 } from 'lucide-react';
 
 interface BlankImageMatch {
@@ -40,16 +44,18 @@ export default function XoxoAdminPage() {
   // Blog Manager States
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [activeTab, setActiveTab] = useState<'manage' | 'create'>('create');
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
 
-  // New Post Form
+  // Post Form
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [excerpt, setExcerpt] = useState('');
   const [thumbnail, setThumbnail] = useState('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop');
+  const [status, setStatus] = useState<PostStatus>('public');
   const [htmlContent, setHtmlContent] = useState(
 `<div class="space-y-6">
   <p class="text-lg text-slate-700 leading-relaxed">
-    Write your blog article here. You can include images with blank src and upload them below!
+    Write your blog article here. You can include video tags, canvas, and images with blank src!
   </p>
   <img src="" alt="AI Guide" loading="lazy" width="1200" height="675" />
 </div>`
@@ -58,12 +64,12 @@ export default function XoxoAdminPage() {
   const [blankImages, setBlankImages] = useState<BlankImageMatch[]>([]);
   const [statusMsg, setStatusMsg] = useState('');
 
-  // Auto-generate slug from title
+  // Auto-generate slug from title if not editing
   useEffect(() => {
-    if (title) {
+    if (title && !editingPostId) {
       setSlug(title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''));
     }
-  }, [title]);
+  }, [title, editingPostId]);
 
   // Parse HTML for blank <img> tags (<img ... src="" ... />)
   useEffect(() => {
@@ -83,10 +89,10 @@ export default function XoxoAdminPage() {
     setBlankImages(matches);
   }, [htmlContent]);
 
-  // Fetch posts on login
+  // Fetch all posts (including draft and unlisted)
   const fetchPosts = async () => {
     try {
-      const res = await fetch('/api/blog/posts');
+      const res = await fetch('/api/blog/posts?all=true');
       const data = await res.json();
       if (data.posts) setPosts(data.posts);
     } catch (e) {
@@ -100,7 +106,7 @@ export default function XoxoAdminPage() {
     }
   }, [authenticated, keyVerified]);
 
-  // Handle Admin Login (Restricted by ADMIN_EMAIL env in backend)
+  // Handle Admin Login
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError('');
@@ -127,7 +133,7 @@ export default function XoxoAdminPage() {
     }
   };
 
-  // Handle Open Key Validation (Restricted by OPEN_KEY env in backend)
+  // Handle Open Key Validation
   const handleVerifyKey = async (e: React.FormEvent) => {
     e.preventDefault();
     setKeyError('');
@@ -154,7 +160,7 @@ export default function XoxoAdminPage() {
     }
   };
 
-  // Upload Thumbnail Image (Enforces 16:9 ratio preview)
+  // Upload Thumbnail Image (16:9 ratio)
   const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -181,7 +187,7 @@ export default function XoxoAdminPage() {
     }
   };
 
-  // Automatically Replace Blank <img> Tag src="" with Uploaded Image URL
+  // Replace Blank <img> Tag src="" with Uploaded Image URL
   const handleBlankImageUpload = async (file: File, targetTag: string) => {
     setLoading(true);
     const formData = new FormData();
@@ -195,7 +201,6 @@ export default function XoxoAdminPage() {
       const data = await res.json();
 
       if (data.url) {
-        // Replace empty src="" in targetTag with data.url
         let updatedTag = targetTag.replace(/src=["']\s*["']/i, `src="${data.url}"`);
         if (!updatedTag.includes('src=')) {
           updatedTag = targetTag.replace('<img', `<img src="${data.url}"`);
@@ -212,22 +217,58 @@ export default function XoxoAdminPage() {
     }
   };
 
-  // Publish New Blog Post
-  const handleCreatePost = async (e: React.FormEvent) => {
+  // Start Editing a Post
+  const handleEditClick = (post: BlogPost) => {
+    setEditingPostId(post.id);
+    setTitle(post.title);
+    setSlug(post.slug);
+    setExcerpt(post.excerpt);
+    setThumbnail(post.thumbnail);
+    setHtmlContent(post.content);
+    setStatus(post.status || 'public');
+    setActiveTab('create');
+    setStatusMsg(`Editing "${post.title}"`);
+  };
+
+  // Reset Form
+  const resetForm = () => {
+    setEditingPostId(null);
+    setTitle('');
+    setSlug('');
+    setExcerpt('');
+    setStatus('public');
+    setThumbnail('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop');
+    setHtmlContent(
+`<div class="space-y-6">
+  <p class="text-lg text-slate-700 leading-relaxed">
+    Write your blog article here.
+  </p>
+  <img src="" alt="AI Guide" loading="lazy" width="1200" height="675" />
+</div>`
+    );
+  };
+
+  // Create or Update Blog Post
+  const handleSavePost = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setStatusMsg('');
 
+    const endpoint = '/api/blog/posts';
+    const method = editingPostId ? 'PUT' : 'POST';
+
     try {
-      const res = await fetch('/api/blog/posts', {
-        method: 'POST',
+      const res = await fetch(endpoint, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          id: editingPostId,
           title,
           slug,
           excerpt,
           content: htmlContent,
           thumbnail,
+          status,
           author: 'NoxyAI Admin'
         })
       });
@@ -237,14 +278,13 @@ export default function XoxoAdminPage() {
       if (!res.ok) {
         setStatusMsg(`Error: ${data.error}`);
       } else {
-        setStatusMsg('Blog post published successfully!');
-        setTitle('');
-        setExcerpt('');
+        setStatusMsg(editingPostId ? 'Blog post updated successfully!' : 'Blog post published successfully!');
+        resetForm();
         fetchPosts();
         setActiveTab('manage');
       }
     } catch (err: any) {
-      setStatusMsg('Failed to publish post');
+      setStatusMsg('Failed to save post');
     } finally {
       setLoading(false);
     }
@@ -261,7 +301,7 @@ export default function XoxoAdminPage() {
     }
   };
 
-  // SCREEN 1: ADMIN LOGIN (EMAIL + PASSWORD ONLY, NO EXPOSED EMAIL)
+  // SCREEN 1: LOGIN
   if (!authenticated) {
     return (
       <main className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-4">
@@ -323,7 +363,7 @@ export default function XoxoAdminPage() {
     );
   }
 
-  // SCREEN 2: OPEN KEY PROMPT (KEY RESTRICTION)
+  // SCREEN 2: OPEN KEY PROMPT
   if (!keyVerified) {
     return (
       <main className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-4">
@@ -371,7 +411,7 @@ export default function XoxoAdminPage() {
     );
   }
 
-  // SCREEN 3: BLOG EDITOR & CONTENT MANAGER
+  // SCREEN 3: EDITOR & MANAGER
   return (
     <main className="min-h-screen bg-[#f8fafc] text-slate-900">
       {/* Top Secret Header */}
@@ -409,27 +449,38 @@ export default function XoxoAdminPage() {
       {/* Main Container */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Navigation Tabs */}
-        <div className="flex items-center gap-3 border-b border-slate-200 pb-4 mb-8">
-          <button
-            onClick={() => setActiveTab('create')}
-            className={`px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 transition cursor-pointer ${
-              activeTab === 'create'
-                ? 'bg-slate-900 text-white shadow-md'
-                : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
-            }`}
-          >
-            <Plus size={16} /> Create New Blog Post
-          </button>
-          <button
-            onClick={() => setActiveTab('manage')}
-            className={`px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 transition cursor-pointer ${
-              activeTab === 'manage'
-                ? 'bg-slate-900 text-white shadow-md'
-                : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
-            }`}
-          >
-            <FileCode size={16} /> Manage Posts ({posts.length})
-          </button>
+        <div className="flex items-center justify-between border-b border-slate-200 pb-4 mb-8">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                resetForm();
+                setActiveTab('create');
+              }}
+              className={`px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 transition cursor-pointer ${
+                activeTab === 'create' && !editingPostId
+                  ? 'bg-slate-900 text-white shadow-md'
+                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+              }`}
+            >
+              <Plus size={16} /> Create New Blog Post
+            </button>
+            <button
+              onClick={() => setActiveTab('manage')}
+              className={`px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 transition cursor-pointer ${
+                activeTab === 'manage'
+                  ? 'bg-slate-900 text-white shadow-md'
+                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+              }`}
+            >
+              <FileCode size={16} /> Manage Posts ({posts.length})
+            </button>
+          </div>
+
+          {editingPostId && (
+            <span className="text-xs font-bold bg-amber-500/10 text-amber-900 px-3 py-1 rounded-lg border border-amber-500/30 flex items-center gap-1.5">
+              <Edit size={14} /> Currently Editing Post
+            </span>
+          )}
         </div>
 
         {statusMsg && (
@@ -439,12 +490,14 @@ export default function XoxoAdminPage() {
           </div>
         )}
 
-        {/* TAB 1: CREATE POST FORM WITH BLANK IMAGE DETECTION */}
+        {/* CREATE / EDIT FORM */}
         {activeTab === 'create' && (
-          <form onSubmit={handleCreatePost} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <form onSubmit={handleSavePost} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
               <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
-                <h2 className="text-xl font-bold text-slate-900">Post Meta & Title</h2>
+                <h2 className="text-xl font-bold text-slate-900">
+                  {editingPostId ? 'Edit Article Details' : 'Post Meta & Title'}
+                </h2>
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1 uppercase tracking-wider">
@@ -486,15 +539,59 @@ export default function XoxoAdminPage() {
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm text-slate-700 focus:outline-none focus:border-slate-900"
                   />
                 </div>
+
+                {/* POST VISIBILITY STATUS SELECTOR */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">
+                    Article Visibility Status
+                  </label>
+                  <div className="grid grid-cols-3 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setStatus('public')}
+                      className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer ${
+                        status === 'public'
+                          ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
+                          : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Globe size={14} /> Public (Visible)
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setStatus('draft')}
+                      className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer ${
+                        status === 'draft'
+                          ? 'bg-amber-600 text-white border-amber-600 shadow-sm'
+                          : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                      }`}
+                    >
+                      <FileText size={14} /> Draft (Private)
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setStatus('unlisted')}
+                      className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer ${
+                        status === 'unlisted'
+                          ? 'bg-purple-600 text-white border-purple-600 shadow-sm'
+                          : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                      }`}
+                    >
+                      <EyeOff size={14} /> Unlisted (Direct Link)
+                    </button>
+                  </div>
+                </div>
               </div>
 
               {/* HTML Code Editor */}
               <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
                 <div className="flex justify-between items-center">
                   <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                    <FileCode size={20} /> HTML Code Content Editor
+                    <FileCode size={20} /> HTML Content Editor (Video, Canvas, WebGL Supported)
                   </h2>
-                  <span className="text-xs text-slate-500 font-mono">HTML Format Supported</span>
+                  <span className="text-xs text-slate-500 font-mono">Raw HTML Format</span>
                 </div>
 
                 <textarea
@@ -505,7 +602,7 @@ export default function XoxoAdminPage() {
                   className="w-full p-4 rounded-xl border border-slate-200 font-mono text-xs text-slate-900 bg-slate-50 leading-relaxed focus:outline-none focus:border-slate-900"
                 />
 
-                {/* AUTOMATIC BLANK IMAGE DETECTOR & AUTO-UPLOADER */}
+                {/* AUTOMATIC BLANK IMAGE DETECTOR */}
                 {blankImages.length > 0 && (
                   <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-3">
                     <div className="flex items-center gap-2 text-amber-900 font-bold text-sm">
@@ -562,22 +659,34 @@ export default function XoxoAdminPage() {
                 </label>
               </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-4 rounded-xl bg-slate-900 text-white font-bold text-base hover:bg-black transition shadow-xl cursor-pointer disabled:opacity-50"
-              >
-                {loading ? 'Publishing...' : 'Publish Blog Post'}
-              </button>
+              <div className="space-y-3">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-4 rounded-xl bg-slate-900 text-white font-bold text-base hover:bg-black transition shadow-xl cursor-pointer disabled:opacity-50"
+                >
+                  {loading ? 'Saving...' : editingPostId ? 'Update Blog Post' : 'Publish Blog Post'}
+                </button>
+
+                {editingPostId && (
+                  <button
+                    type="button"
+                    onClick={resetForm}
+                    className="w-full py-2.5 rounded-xl bg-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-300 transition cursor-pointer"
+                  >
+                    Cancel Editing
+                  </button>
+                )}
+              </div>
             </div>
           </form>
         )}
 
-        {/* TAB 2: MANAGE EXISTING POSTS */}
+        {/* TAB 2: MANAGE POSTS */}
         {activeTab === 'manage' && (
           <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-200 font-bold text-slate-900 text-base">
-              Published Blog Posts ({posts.length})
+              All Blog Articles ({posts.length})
             </div>
 
             <div className="divide-y divide-slate-200">
@@ -586,12 +695,35 @@ export default function XoxoAdminPage() {
                   <div className="flex items-center gap-4">
                     <img src={post.thumbnail} alt={post.title} className="w-24 h-14 object-cover rounded-lg border border-slate-200 shrink-0" />
                     <div>
-                      <h4 className="font-bold text-slate-900 text-base">{post.title}</h4>
-                      <p className="text-xs text-slate-500 font-mono mt-0.5">/blog/{post.slug}</p>
+                      <div className="flex items-center gap-2 mb-1">
+                        <h4 className="font-bold text-slate-900 text-base">{post.title}</h4>
+                        {post.status === 'public' && (
+                          <span className="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                            Public
+                          </span>
+                        )}
+                        {post.status === 'draft' && (
+                          <span className="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                            Draft
+                          </span>
+                        )}
+                        {post.status === 'unlisted' && (
+                          <span className="bg-purple-100 text-purple-700 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                            Unlisted
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-500 font-mono">/blog/{post.slug}</p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => handleEditClick(post)}
+                      className="px-3.5 py-2 rounded-lg bg-slate-900 text-white hover:bg-black text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Edit size={14} /> Edit
+                    </button>
                     <a
                       href={`/blog/${post.slug}`}
                       target="_blank"

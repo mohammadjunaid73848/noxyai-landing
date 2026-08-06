@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { ChevronRight, Download } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import { TimelineAnimation } from '@/components/ui/hero-financial-utils/timeline-animation'
 import { EcommerceDash } from '@/components/ui/hero-financial-utils/assets-index'
 import { FloatingGlassHeader } from '@/components/ui/floating-glass-header'
@@ -45,14 +45,14 @@ export const HeroFinancial = () => {
         <TimelineAnimation
           animationNum={4}
           timelineRef={timelineRef}
-          className="flex flex-wrap justify-center gap-4 pt-2"
+          className="flex justify-center pt-2"
         >
-          <button className="bg-neutral-900 text-white px-6 py-3.5 rounded-xl font-bold text-base hover:bg-black transition shadow-lg flex items-center gap-2 cursor-pointer">
-            Get started for free <ChevronRight size={18} />
-          </button>
-          <button className="bg-white/90 text-slate-900 border border-slate-300 px-6 py-3.5 rounded-xl font-bold text-base hover:bg-white transition shadow-xs flex items-center gap-2 cursor-pointer">
-            <Download size={18} /> Download Linux Version
-          </button>
+          <a
+            href="https://chat.noxyai.com"
+            className="bg-neutral-900 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-black transition shadow-lg flex items-center gap-2 cursor-pointer"
+          >
+            Get started for free <ChevronRight size={20} />
+          </a>
         </TimelineAnimation>
       </div>
 

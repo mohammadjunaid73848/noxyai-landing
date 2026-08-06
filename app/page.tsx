@@ -9,7 +9,6 @@ import { GradientBackground } from '@/components/ui/almoayyed';
 import { FaAmazon, FaDiscord, FaShopify } from 'react-icons/fa';
 import {
   Bot,
-  Sparkles,
   ArrowRight,
   CheckCircle2,
   Layers,
@@ -23,15 +22,14 @@ import {
   TrendingUp,
   FileText,
   ChevronDown,
-  Download,
   Store,
   Boxes,
   Compass,
-  Briefcase
+  Briefcase,
+  Instagram
 } from 'lucide-react';
 import {
   AgentBuilderVideo,
-  NoxyFullLogo,
   EvolveImages,
   CollaborateImages
 } from '@/components/ui/hero-financial-utils/assets-index';
@@ -523,18 +521,18 @@ export default function Home() {
           <p className="text-slate-300 text-lg md:text-xl max-w-2xl mx-auto px-2">
             Start using NoxyAI today and join thousands of super individuals operating 7x24 autonomous AI teams.
           </p>
-          <div className="pt-6 flex flex-wrap justify-center gap-4">
-            <button className="bg-white hover:bg-neutral-100 text-slate-900 px-6 md:px-8 py-3.5 md:py-4 rounded-xl font-bold text-base md:text-lg transition flex items-center gap-2 shadow-lg cursor-pointer">
+          <div className="pt-6 flex justify-center">
+            <a
+              href="https://chat.noxyai.com"
+              className="bg-white hover:bg-neutral-100 text-slate-900 px-8 py-4 rounded-xl font-bold text-lg transition flex items-center gap-2 shadow-lg cursor-pointer"
+            >
               Get started for free <ArrowRight size={20} />
-            </button>
-            <button className="bg-slate-800 hover:bg-slate-700 text-white px-6 md:px-8 py-3.5 md:py-4 rounded-xl font-bold text-base md:text-lg transition flex items-center gap-2 border border-slate-700 cursor-pointer">
-              <Download size={20} /> Download Linux Version
-            </button>
+            </a>
           </div>
         </div>
       </section>
 
-      {/* 9. FOOTER - PURE BLACK BACKGROUND & LOGO WITHOUT WHITE BOX */}
+      {/* 9. FOOTER - PURE BLACK BACKGROUND */}
       <footer className="py-12 md:py-16 px-4 bg-[#000000] text-slate-400 border-t border-zinc-800 relative z-20">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
@@ -545,40 +543,42 @@ export default function Home() {
                 className="h-8 md:h-10 w-auto bg-transparent p-0 object-contain"
               />
               <p className="text-sm text-slate-400 max-w-sm leading-relaxed">
-                NoxyAI is a collaborative agent platform for work and life. We use trusted AI services like OpenAI (GPT-4) and Anthropic (Claude) to power our features.
+                NoxyAI is a collaborative agent platform for work and life.
               </p>
+              <div className="flex items-center gap-3 pt-2">
+                <a
+                  href="https://www.instagram.com/official_noxyai?igsh=Ymtxc3Y3czlha3R3"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-9 h-9 rounded-full bg-slate-900 text-slate-300 hover:text-white hover:bg-slate-800 flex items-center justify-center transition"
+                  aria-label="Instagram"
+                >
+                  <Instagram size={18} />
+                </a>
+              </div>
             </div>
 
             <div>
               <h4 className="text-white font-bold mb-4 text-sm uppercase tracking-wider">Product</h4>
               <ul className="space-y-2.5 text-sm">
-                <li><a href="#pricing" className="hover:text-white transition">Pricing</a></li>
-                <li><a href="#" className="hover:text-white transition">Download</a></li>
-                <li><a href="#" className="hover:text-white transition">Cloud</a></li>
-                <li><a href="#" className="hover:text-white transition">Community Edition</a></li>
-                <li><a href="#create" className="hover:text-white transition">Marketplace (Agents, MCP, Skills)</a></li>
+                <li><a href="https://chat.noxyai.com" className="hover:text-white transition">Product Chat</a></li>
+                <li><a href="https://chat.noxyai.com/pricing" className="hover:text-white transition">Pricing</a></li>
               </ul>
             </div>
 
             <div>
               <h4 className="text-white font-bold mb-4 text-sm uppercase tracking-wider">Solutions</h4>
               <ul className="space-y-2.5 text-sm">
-                <li><a href="#collaborate" className="hover:text-white transition">Workspace</a></li>
-                <li><a href="#collaborate" className="hover:text-white transition">Pages</a></li>
-                <li><a href="#collaborate" className="hover:text-white transition">Task Schedule</a></li>
-                <li><a href="#products" className="hover:text-white transition">NoxyAI for Slack</a></li>
-                <li><a href="#products" className="hover:text-white transition">NoxyAI for Telegram</a></li>
-                <li><a href="#products" className="hover:text-white transition">NoxyAI for Discord</a></li>
+                <li><a href="https://aboutus.noxyai.com" className="hover:text-white transition">About Us</a></li>
+                <li><a href="https://support.noxyai.com" className="hover:text-white transition">Support</a></li>
               </ul>
             </div>
 
             <div>
               <h4 className="text-white font-bold mb-4 text-sm uppercase tracking-wider">Resources</h4>
               <ul className="space-y-2.5 text-sm">
-                <li><a href="#resources" className="hover:text-white transition">Docs</a></li>
-                <li><a href="#resources" className="hover:text-white transition">Developer</a></li>
-                <li><a href="#resources" className="hover:text-white transition">Blog</a></li>
-                <li><a href="#resources" className="hover:text-white transition">Changelog</a></li>
+                <li><Link href="/blog" className="hover:text-white transition">Blog</Link></li>
+                <li><Link href="/terms" className="hover:text-white transition">Terms of Service</Link></li>
                 <li><Link href="/privacy" className="hover:text-white transition">Privacy Policy</Link></li>
               </ul>
             </div>
